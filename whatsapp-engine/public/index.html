@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>ChatGLN QR</title>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+    <style>
+
+        body {
+
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            flex-direction: column;
+
+            height: 100vh;
+
+        }
+
+        img {
+
+            width: 320px;
+
+            margin-top: 20px;
+
+            border-radius: 20px;
+
+            background: white;
+
+            padding: 10px;
+
+        }
+
+        button {
+
+            margin-top: 20px;
+
+            padding: 12px 20px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            font-size: 16px;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>ChatGLN WhatsApp Connection</h1>
+
+    <h2 id="status">
+        Génération du QR Code...
+    </h2>
+
+    <img id="qr" />
+
+    <button onclick="downloadQR()">
+        Télécharger QR
+    </button>
+
+    <script>
+
+        const socket = io();
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+        const assistantId =
+            params.get('assistantId');
+
+        const qrImage =
+            document.getElementById('qr');
+
+        const statusText =
+            document.getElementById('status');
+
+        socket.on(
+
+            `qr-${assistantId}`,
+
+            (data) => {
+
+                qrImage.src = data;
+
+            }
+
+        );
+
+        socket.on(
+
+            `ready-${assistantId}`,
+
+            () => {
+
+                statusText.innerHTML =
+                    "✅ ChatGLN connecté à WhatsApp";
+
+            }
+
+        );
+
+        function downloadQR() {
+
+            const link =
+                document.createElement('a');
+
+            link.href =
+                qrImage.src;
+
+            link.download =
+                'chatgln-qr.png';
+
+            link.click();
+
+        }
+
+    </script>
+
+</body>
+
+</html>
